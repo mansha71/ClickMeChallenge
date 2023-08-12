@@ -33,6 +33,12 @@ function App() {
 
   return (
     <>
+      <div>
+        Start game:
+        <form action="submit">
+          <button>Start</button>
+        </form>
+      </div>
       <p>Click to start!</p>
       <p>Score: {score}</p>
       <p>HighScore: {highscore}</p>
