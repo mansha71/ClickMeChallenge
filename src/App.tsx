@@ -7,19 +7,21 @@ function App() {
   const [color, setColor] = useState("#1a1a1a"); // Initial color
   const [score, setScore] = useState(0);
   const [highscore, setHigh] = useState(0);
+  const [start, setStart] = useState(false);
 
   const handleButtonClick = () => {
     const newTop = Math.floor(Math.random() * 370).toString();
     const newLeft = Math.floor(Math.random() * 401).toString();
     const randomColor = getRandomColor();
-    setScore(score + 1);
+
+    // Use functional update for score
+    setScore((prevScore) => prevScore + 1);
     setTop(newTop);
     setLeft(newLeft);
     setColor(randomColor);
 
-    if (score > highscore) {
-      setHigh(score + 1);
-    }
+    // Update highscore
+    setHigh((prevHighscore) => Math.max(prevHighscore, score + 1));
   };
 
   const getRandomColor = () => {
@@ -31,29 +33,37 @@ function App() {
     return color;
   };
 
+  const handleStartGame = () => {
+    setStart(true);
+  };
+
   return (
     <>
-      <div>
-        Start game:
-        <form action="submit">
-          <button>Start</button>
-        </form>
-      </div>
-      <p>Click to start!</p>
-      <p>Score: {score}</p>
-      <p>HighScore: {highscore}</p>
-      <button
-        onClick={() => {
-          handleButtonClick();
-        }}
-        style={{
-          marginTop: `${marginTop}px`,
-          marginLeft: `${marginLeft}px`,
-          backgroundColor: color,
-        }}
-      >
-        CLICK ME!
-      </button>
+      {!start && (
+        <div className="startScreen">
+          Start game:
+          <button onClick={handleStartGame}>Start: {start.toString()}</button>
+        </div>
+      )}
+      {start && (
+        <span>
+          <p>Click to start!</p>
+          <p>Score: {score}</p>
+          <p>HighScore: {highscore}</p>
+          <button
+            onClick={() => {
+              handleButtonClick();
+            }}
+            style={{
+              marginTop: `${marginTop}px`,
+              marginLeft: `${marginLeft}px`,
+              backgroundColor: color,
+            }}
+          >
+            CLICK ME!
+          </button>
+        </span>
+      )}
     </>
   );
 }
