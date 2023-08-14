@@ -4,37 +4,39 @@ import "./App.css";
 function App() {
   const buttonWidth = 100;
   const buttonHeight = 30;
-
+  const windowHeight = window.innerHeight;
+  const windowWidth = window.innerWidth;
   const [marginTop, setTop] = useState("");
   const [marginLeft, setLeft] = useState("");
-  const [color, setColor] = useState("#1a1a1a");
+  const [color, setColor] = useState("#ffffff");
   const [score, setScore] = useState(0);
   const [highscore, setHigh] = useState(0);
   const [start, setStart] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(30); // 60 seconds
+  const [timeRemaining, setTimeRemaining] = useState(30);
+  const [gameReset, setGameReset] = useState(false);
 
   useEffect(() => {
     let countdownInterval: number;
 
+    if (timeRemaining <= 0) {
+      setGameReset(true);
+    }
     if (start && timeRemaining > 0) {
       countdownInterval = window.setInterval(() => {
         setTimeRemaining((prevTime) => prevTime - 1);
-      }, 1000); // Update every second
+      }, 1000);
     }
-
     return () => {
       clearInterval(countdownInterval);
     };
   }, [start, timeRemaining]);
 
   const handleButtonClick = () => {
-    const windowHeight = window.innerHeight;
-    const windowWidth = window.innerWidth;
-
     const maxTop = windowHeight - buttonHeight;
     const maxLeft = windowWidth - buttonWidth;
 
-    const newTop = Math.floor(Math.random() * maxTop);
+    const calculatedTop = Math.floor(Math.random() * maxTop - 129);
+    const newTop = Math.min(350, Math.max(10, calculatedTop));
     const newLeft = Math.floor(Math.random() * maxLeft);
     const randomColor = getRandomColor();
 
@@ -59,25 +61,30 @@ function App() {
     setStart(true);
   };
 
+  const handleResetGame = () => {
+    setGameReset(false);
+    setScore(0);
+    setTimeRemaining(30);
+  };
+
   return (
     <>
       {!start && (
-        <div>
-          Start game:
+        <div className="startScreen">
+          <div className="StartWord">Start Game:</div>
           <button onClick={handleStartGame}>Start:</button>
         </div>
       )}
-      <p>Score: {score}</p>
-      <p>HighScore: {highscore}</p>
-      <p>Time remaining: {timeRemaining} seconds</p>
-      {start && (
+      {start && !gameReset && (
         <span>
+          <p>Score: {score}</p>
+          <p>HighScore: {highscore}</p>
+          <p>Time remaining: {timeRemaining} seconds</p>
           <div
             className="butScreen"
             style={{
-              backgroundColor: "black",
               width: "100%",
-              height: "100vh", // Set the height to the full viewport height
+              height: "75vh", // Set the height to the full viewport height
             }}
           >
             <button
@@ -90,10 +97,18 @@ function App() {
                 backgroundColor: color,
               }}
             >
-              CLICK ME!
+              Click!
             </button>
           </div>
         </span>
+      )}
+      {start && gameReset && (
+        <div className="gameReset">
+          <h3>Restart?</h3>
+          <p>Score: {score}</p>
+          <p>Highscore: {highscore}</p>
+          <button onClick={() => handleResetGame()}>Restart</button>
+        </div>
       )}
     </>
   );
