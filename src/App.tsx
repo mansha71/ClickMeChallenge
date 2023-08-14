@@ -1,26 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
+  const buttonWidth = 100;
+  const buttonHeight = 30;
+
   const [marginTop, setTop] = useState("");
   const [marginLeft, setLeft] = useState("");
-  const [color, setColor] = useState("#1a1a1a"); // Initial color
+  const [color, setColor] = useState("#1a1a1a");
   const [score, setScore] = useState(0);
   const [highscore, setHigh] = useState(0);
   const [start, setStart] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(60); // 60 seconds
+
+  useEffect(() => {
+    let countdownInterval: number;
+
+    if (start && timeRemaining > 0) {
+      countdownInterval = window.setInterval(() => {
+        setTimeRemaining((prevTime) => prevTime - 1);
+      }, 1000); // Update every second
+    }
+
+    return () => {
+      clearInterval(countdownInterval);
+    };
+  }, [start, timeRemaining]);
 
   const handleButtonClick = () => {
-    const newTop = Math.floor(Math.random() * 370).toString();
-    const newLeft = Math.floor(Math.random() * 401).toString();
+    const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+
+    const maxTop = windowHeight - buttonHeight;
+    const maxLeft = windowWidth - buttonWidth;
+
+    const newTop = Math.floor(Math.random() * maxTop);
+    const newLeft = Math.floor(Math.random() * maxLeft);
     const randomColor = getRandomColor();
 
-    // Use functional update for score
     setScore((prevScore) => prevScore + 1);
-    setTop(newTop);
-    setLeft(newLeft);
+    setTop(newTop.toString());
+    setLeft(newLeft.toString());
     setColor(randomColor);
 
-    // Update highscore
     setHigh((prevHighscore) => Math.max(prevHighscore, score + 1));
   };
 
@@ -40,28 +62,37 @@ function App() {
   return (
     <>
       {!start && (
-        <div className="startScreen">
+        <div>
           Start game:
-          <button onClick={handleStartGame}>Start: {start.toString()}</button>
+          <button onClick={handleStartGame}>Start:</button>
         </div>
       )}
+      <p>Score: {score}</p>
+      <p>HighScore: {highscore}</p>
+      <p>Time remaining: {timeRemaining} seconds</p>
       {start && (
         <span>
-          <p>Click to start!</p>
-          <p>Score: {score}</p>
-          <p>HighScore: {highscore}</p>
-          <button
-            onClick={() => {
-              handleButtonClick();
-            }}
+          <div
+            className="butScreen"
             style={{
-              marginTop: `${marginTop}px`,
-              marginLeft: `${marginLeft}px`,
-              backgroundColor: color,
+              backgroundColor: "black",
+              width: "100%",
+              height: "100vh", // Set the height to the full viewport height
             }}
           >
-            CLICK ME!
-          </button>
+            <button
+              onClick={() => {
+                handleButtonClick();
+              }}
+              style={{
+                marginTop: `${marginTop}px`,
+                marginLeft: `${marginLeft}px`,
+                backgroundColor: color,
+              }}
+            >
+              CLICK ME!
+            </button>
+          </div>
         </span>
       )}
     </>

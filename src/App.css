@@ -33,3 +33,24 @@ button {
 button:hover {
   border-color: #646cff;
 }
+
+.gameButton {
+    border-radius: 8px;
+      border: 1px solid transparent;
+      padding: 0.6em 1.2em;
+      font-size: 0.45em;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.25s;
+}
+
+.startScreen {
+  text-align: center;
+}
+
+.butScreen {
+  background-color: rgb(211, 71, 71);
+  width: 100%;
+  height: 400px
+}
