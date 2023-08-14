@@ -11,7 +11,7 @@ function App() {
   const [score, setScore] = useState(0);
   const [highscore, setHigh] = useState(0);
   const [start, setStart] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(60); // 60 seconds
+  const [timeRemaining, setTimeRemaining] = useState(30); // 60 seconds
 
   useEffect(() => {
     let countdownInterval: number;
